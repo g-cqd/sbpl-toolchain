@@ -16,9 +16,21 @@ let package = Package(
       name: "SBPLLexer",
       targets: ["SBPLLexer"]
     ),
+    .library(
+      name: "SBPLParser",
+      targets: ["SBPLParser"]
+    ),
+    .library(
+      name: "SBPLConverter",
+      targets: ["SBPLConverter"]
+    ),
     .executable(
       name: "sbpl-lex",
       targets: ["sbpl-lex"]
+    ),
+    .executable(
+      name: "sbpl-convert",
+      targets: ["sbpl-convert"]
     ),
   ],
   targets: [
@@ -31,10 +43,25 @@ let package = Package(
       name: "SBPLLexer",
       dependencies: ["SBPLCore"]
     ),
+    // Parser depends on Lexer
+    .target(
+      name: "SBPLParser",
+      dependencies: ["SBPLCore", "SBPLLexer"]
+    ),
+    // Converter depends on Parser
+    .target(
+      name: "SBPLConverter",
+      dependencies: ["SBPLCore", "SBPLParser"]
+    ),
     // CLI for testing lexer
     .executableTarget(
       name: "sbpl-lex",
       dependencies: ["SBPLLexer"]
+    ),
+    // CLI for converting
+    .executableTarget(
+      name: "sbpl-convert",
+      dependencies: ["SBPLConverter"]
     ),
     // Tests
     .testTarget(
@@ -47,6 +74,14 @@ let package = Package(
       resources: [
         .copy("../../Fixtures"),
       ]
+    ),
+    .testTarget(
+      name: "SBPLParserTests",
+      dependencies: ["SBPLParser"]
+    ),
+    .testTarget(
+      name: "SBPLConverterTests",
+      dependencies: ["SBPLConverter"]
     ),
   ]
 )
