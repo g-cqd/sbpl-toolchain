@@ -1,0 +1,75 @@
+{
+  "name": "sbpl-language",
+  "displayName": "SBPL - Sandbox Profile Language",
+  "description": "Syntax highlighting and diagnostics for Apple Sandbox Profile Language files",
+  "version": "0.1.0",
+  "publisher": "sbpl-toolchain",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sbpl-toolchain/vscode-sbpl"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:sbpl"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "sbpl",
+        "aliases": [
+          "Sandbox Profile Language",
+          "sbpl"
+        ],
+        "extensions": [
+          ".sb",
+          ".sbpl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sbpl",
+        "scopeName": "source.sbpl",
+        "path": "./syntaxes/sbpl.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "SBPL",
+      "properties": {
+        "sbpl.executablePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the sbpl-convert executable. If empty, will search in PATH."
+        },
+        "sbpl.enableDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time syntax checking."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.0"
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Sandbox Profile Language",
+  "scopeName": "source.sbpl",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#raw-strings" },
+    { "include": "#booleans" },
+    { "include": "#numbers" },
+    { "include": "#declarations" },
+    { "include": "#rules" },
+    { "include": "#filters" },
+    { "include": "#operations" },
+    { "include": "#builtins" },
+    { "include": "#symbols" },
+    { "include": "#parens" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.semicolon.sbpl",
+          "match": ";.*$"
+        },
+        {
+          "name": "comment.block.sbpl",
+          "begin": "#\\|",
+          "end": "\\|#",
+          "patterns": [
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.sbpl",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.sbpl",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "raw-strings": {
+      "name": "string.quoted.other.raw.sbpl",
+      "begin": "#\"",
+      "end": "\""
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.true.sbpl",
+          "match": "\\b(#t|#true|#T|#TRUE)\\b"
+        },
+        {
+          "name": "constant.language.boolean.false.sbpl",
+          "match": "\\b(#f|#false|#F|#FALSE)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.integer.sbpl",
+      "match": "-?\\b[0-9]+\\b"
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "(\\()\\s*(version)\\s+([0-9]+)",
+          "captures": {
+            "1": { "name": "punctuation.paren.open.sbpl" },
+            "2": { "name": "keyword.control.declaration.version.sbpl" },
+            "3": { "name": "constant.numeric.version.sbpl" }
+          }
+        },
+        {
+          "match": "(\\()\\s*(debug)\\s+(allow|deny)",
+          "captures": {
+            "1": { "name": "punctuation.paren.open.sbpl" },
+            "2": { "name": "keyword.control.declaration.debug.sbpl" },
+            "3": { "name": "keyword.control.action.sbpl" }
+          }
+        },
+        {
+          "match": "(\\()\\s*(import)\\s+",
+          "captures": {
+            "1": { "name": "punctuation.paren.open.sbpl" },
+            "2": { "name": "keyword.control.import.sbpl" }
+          }
+        },
+        {
+          "match": "(\\()\\s*(define)\\s+([a-zA-Z_][a-zA-Z0-9_*?!-]*)",
+          "captures": {
+            "1": { "name": "punctuation.paren.open.sbpl" },
+            "2": { "name": "keyword.control.define.sbpl" },
+            "3": { "name": "entity.name.function.sbpl" }
+          }
+        }
+      ]
+    },
+    "rules": {
+      "patterns": [
+        {
+          "match": "(\\()\\s*(allow|deny)\\b",
+          "captures": {
+            "1": { "name": "punctuation.paren.open.sbpl" },
+            "2": { "name": "keyword.control.rule.sbpl" }
+          }
+        }
+      ]
+    },
+    "filters": {
+      "patterns": [
+        {
+          "name": "keyword.operator.filter.compound.sbpl",
+          "match": "\\b(require-all|require-any|require-not|require-entitlement)\\b"
+        },
+        {
+          "name": "support.function.filter.sbpl",
+          "match": "\\b(literal|subpath|regex|prefix|global-name|local-name|extension|file-mode|socket-domain|socket-type|socket-protocol|iokit-user-client-class|appleevent-destination|mach-local|mach-register|process-attribute|vnode-type|device-conforms-to|semaphore-owner|with\\s+report|with\\s+send-signal|with\\s+no-report|with\\s+no-sandbox|home-literal|home-subpath|home-regex|home-prefix|entitlement-value|iokit-property|iokit-connection|iokit-registry-entry-class|sysctl-name|system-attribute|boot-arg|fs-attribute|storage-class|storage-class-extension|network-interface|network-local|host-local)\\b"
+        }
+      ]
+    },
+    "operations": {
+      "name": "entity.name.tag.operation.sbpl",
+      "match": "\\b(default|file-read-data|file-read-metadata|file-read-xattr|file-write-data|file-write-create|file-write-unlink|file-write-xattr|file-write-mode|file-write-flags|file-write-owner|file-write-times|file-read\\*|file-write\\*|file-ioctl|file-mount|file-unmount|file-chroot|file-clone|file-link|file-map-executable|file-revoke|file-search|file-test-existence|file-mknod|file-issue-extension|mach-cross-domain-lookup|mach-host-exception-port-set|mach-host-special-port-set|mach-issue-extension|mach-lookup|mach-per-user-lookup|mach-priv|mach-priv-host-port|mach-priv-task-port|mach-register|mach-task-name|ipc-posix-issue-extension|ipc-posix-sem|ipc-posix-shm|ipc-posix-shm-read-data|ipc-posix-shm-read-metadata|ipc-posix-shm-write-data|ipc-posix-shm-write-create|ipc-posix-shm-write-unlink|ipc-sysv-msg|ipc-sysv-sem|ipc-sysv-shm|network\\*|network-inbound|network-outbound|network-bind|sysctl-read|sysctl-write|system-debug|system-fcntl|system-fsctl|system-info|system-kext|system-kext-load|system-kext-query|system-kext-unload|system-mac-label|system-nfssvc|system-package-check|system-privilege|system-reboot|system-set-time|system-socket|system-suspend-resume|system-swap|iokit-open|iokit-open-user-client|iokit-set-properties|iokit-get-properties|iokit-issue-extension|process-exec|process-exec\\*|process-fork|process-info|process-info\\*|process-info-codesignature|process-info-dirtycontrol|process-info-listpids|process-info-pidinfo|process-info-pidfdinfo|process-info-rusage|process-info-setcontrol|process-codesigning-status|signal|user-preference-read|user-preference-write|appleevent-send|pseudo-tty|device-camera|device-microphone|hid-control|darwin-notification|nvram\\*|nvram-delete|nvram-get|nvram-set|authorization-right-obtain|lsopen|distributed-notification-post|job-creation|storage-class-map|socket-ioctl|socket-option-get|socket-option-set|necp-client-open|fs-quota|fs-rename|fs-snapshot|fs-snapshot-create|fs-snapshot-delete|fs-snapshot-mount|fs-snapshot-rename|fs-snapshot-revert)\\b"
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.predicate.sbpl",
+          "match": "%[a-zA-Z0-9_*?!-]+"
+        },
+        {
+          "name": "variable.language.parameter.sbpl",
+          "match": "\\$[a-zA-Z0-9_-]+"
+        }
+      ]
+    },
+    "symbols": {
+      "name": "variable.other.symbol.sbpl",
+      "match": "[a-zA-Z_][a-zA-Z0-9_*?!-]*"
+    },
+    "parens": {
+      "patterns": [
+        {
+          "name": "punctuation.paren.open.sbpl",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.paren.close.sbpl",
+          "match": "\\)"
+        }
+      ]
+    }
+  }
+}

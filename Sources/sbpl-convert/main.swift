@@ -63,10 +63,13 @@ struct SBPLConvertCLI {
         -h, --help        Show this help message
         -v, --version     Show version
 
+      Use '-' as FILE to read from stdin.
+
       EXAMPLES:
         sbpl-convert to-json profile.sb > profile.json
         sbpl-convert to-sbpl profile.json > profile.sb
         sbpl-convert check profile.sb
+        cat profile.sb | sbpl-convert check -
       """)
   }
 
@@ -103,18 +106,23 @@ struct SBPLConvertCLI {
   static func checkSyntax(path: String) {
     guard let source = readFile(at: path) else { return }
 
+    let displayPath = path == "-" ? "<stdin>" : path
     let converter = SBPLToJSON()
-    let result = converter.convert(source: source, path: path)
+    let result = converter.convert(source: source, path: displayPath)
 
-    printDiagnostics(result.diagnostics, path: path)
+    printDiagnostics(result.diagnostics, path: displayPath)
 
     let errors = result.diagnostics.filter { $0.severity == .error }.count
     let warnings = result.diagnostics.filter { $0.severity == .warning }.count
 
-    if errors == 0 && warnings == 0 {
-      print("✓ \(path): No issues found")
-    } else {
-      print("\n\(path): \(errors) error(s), \(warnings) warning(s)")
+    // Only print summary to stdout when not reading from stdin
+    // (VS Code extension parses stderr for diagnostics)
+    if path != "-" {
+      if errors == 0 && warnings == 0 {
+        print("\(displayPath): No issues found")
+      } else {
+        print("\(displayPath): \(errors) error(s), \(warnings) warning(s)")
+      }
     }
 
     if errors > 0 {
@@ -123,6 +131,15 @@ struct SBPLConvertCLI {
   }
 
   static func readFile(at path: String) -> String? {
+    // Support reading from stdin with "-"
+    if path == "-" {
+      var input = ""
+      while let line = readLine(strippingNewline: false) {
+        input += line
+      }
+      return input
+    }
+
     let url = URL(fileURLWithPath: path)
 
     guard FileManager.default.fileExists(atPath: path) else {
@@ -140,12 +157,14 @@ struct SBPLConvertCLI {
     }
   }
 
-  static func printDiagnostics(_ diagnostics: [Diagnostic], path: String) {
+  static func printDiagnostics(_ diagnostics: [Diagnostic], path _: String) {
     for diag in diagnostics {
-      let severity = diag.severity.rawValue.uppercased()
+      let severity = diag.severity.rawValue.lowercased()
       let line = diag.range.start.line + 1
       let col = diag.range.start.column + 1
-      fputs("\(path):\(line):\(col): \(severity): \(diag.message) [\(diag.code.rawValue)]\n", stderr)
+      // Format: line:col: severity: message
+      // This format is parseable by VS Code extension
+      fputs("\(line):\(col): \(severity): \(diag.message)\n", stderr)
     }
   }
 }
