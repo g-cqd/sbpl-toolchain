@@ -69,11 +69,11 @@ code --install-extension sbpl-language-*.vsix
 
 ### Installing the CLI Tool (for diagnostics)
 
-Diagnostics require the `sbpl-convert` CLI from the [sbpl-toolchain](https://github.com/anthropics/sbpl-toolchain) project:
+Diagnostics require the `sbpl-convert` CLI from the [sbpl-toolchain](https://github.com/g-cqd/sbpl-toolchain) project:
 
 ```bash
 # Clone and build
-git clone https://github.com/anthropics/sbpl-toolchain.git
+git clone https://github.com/g-cqd/sbpl-toolchain.git
 cd sbpl-toolchain
 swift build -c release
 
@@ -122,13 +122,13 @@ cp .build/release/sbpl-convert /usr/local/bin/
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/anthropics/sbpl-toolchain/blob/main/CONTRIBUTING.md) in the main repository.
+See [CONTRIBUTING.md](https://github.com/g-cqd/sbpl-toolchain/blob/main/CONTRIBUTING.md) in the main repository.
 
 ## License
 
-MIT License — see [LICENSE](https://github.com/anthropics/sbpl-toolchain/blob/main/LICENSE).
+MIT License — see [LICENSE](https://github.com/g-cqd/sbpl-toolchain/blob/main/LICENSE).
 
 ## Related
 
-- [sbpl-toolchain](https://github.com/anthropics/sbpl-toolchain) — Swift package with lexer, parser, and converter
+- [sbpl-toolchain](https://github.com/g-cqd/sbpl-toolchain) — Swift package with lexer, parser, and converter
 - [Apple Sandbox Documentation](https://developer.apple.com/documentation/security/app_sandbox)

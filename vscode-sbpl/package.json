@@ -8,13 +8,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anthropics/sbpl-toolchain",
+    "url": "https://github.com/g-cqd/sbpl-toolchain",
     "directory": "vscode-sbpl"
   },
   "bugs": {
-    "url": "https://github.com/anthropics/sbpl-toolchain/issues"
+    "url": "https://github.com/g-cqd/sbpl-toolchain/issues"
   },
-  "homepage": "https://github.com/anthropics/sbpl-toolchain#readme",
+  "homepage": "https://github.com/g-cqd/sbpl-toolchain#readme",
   "keywords": [
     "sandbox",
     "sbpl",
