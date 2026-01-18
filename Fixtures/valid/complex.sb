@@ -1,0 +1,35 @@
+(version 1)
+
+#|
+  Complex sandbox profile for testing
+  Multiple filter types and operations
+|#
+
+(deny default)
+
+; File operations
+(allow file-read*
+  (require-all
+    (subpath "/Applications")
+    (extension "com.apple.app-sandbox.read")))
+
+(allow file-write-data
+  (require-any
+    (literal "/tmp/test.txt")
+    (subpath "/var/folders")))
+
+; Network operations
+(allow network-outbound
+  (remote tcp "*:443"))
+
+; Process operations
+(allow process-exec
+  (literal "/usr/bin/sw_vers"))
+
+; Boolean literals
+(if #t
+  (allow file-read-data (literal "/etc/hosts")))
+
+; Raw strings
+(allow file-read-data
+  (regex #"^/Users/[^/]+/Library/"))

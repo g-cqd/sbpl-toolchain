@@ -1,0 +1,13 @@
+(version 1)
+
+; Basic sandbox profile
+(deny default)
+
+; Allow reading system files
+(allow file-read-data
+  (subpath "/System")
+  (subpath "/usr"))
+
+; Allow Mach services
+(allow mach-lookup
+  (global-name "com.apple.system.logger"))
