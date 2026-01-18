@@ -1,19 +1,30 @@
-# Swift Package Manager
+# Swift
 .build/
 .swiftpm/
-Package.resolved
-
-# Xcode
-*.xcodeproj/
-*.xcworkspace/
+*.xcodeproj
+*.xcworkspace
 xcuserdata/
 DerivedData/
+Package.resolved
 
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
 
-# VS Code
-.vscode/
+# VS Code Extension
+vscode-sbpl/node_modules/
+vscode-sbpl/out/
+vscode-sbpl/*.vsix
+vscode-sbpl/.vscode-test/
 
 # IDE
-*.idea/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test artifacts
+*.log
+coverage/

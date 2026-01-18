@@ -1,20 +1,42 @@
 {
   "name": "sbpl-language",
   "displayName": "SBPL - Sandbox Profile Language",
-  "description": "Syntax highlighting and diagnostics for Apple Sandbox Profile Language files",
+  "description": "Syntax highlighting, diagnostics, and autocompletion for Apple Sandbox Profile Language (.sb) files",
   "version": "0.1.0",
   "publisher": "sbpl-toolchain",
+  "author": "SBPL Toolchain Contributors",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sbpl-toolchain/vscode-sbpl"
+    "url": "https://github.com/anthropics/sbpl-toolchain",
+    "directory": "vscode-sbpl"
   },
+  "bugs": {
+    "url": "https://github.com/anthropics/sbpl-toolchain/issues"
+  },
+  "homepage": "https://github.com/anthropics/sbpl-toolchain#readme",
+  "keywords": [
+    "sandbox",
+    "sbpl",
+    "macos",
+    "ios",
+    "apple",
+    "security",
+    "sandbox-profile"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
     "Programming Languages",
-    "Linters"
+    "Linters",
+    "Formatters"
   ],
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
   "activationEvents": [
     "onLanguage:sbpl"
   ],
@@ -25,13 +47,18 @@
         "id": "sbpl",
         "aliases": [
           "Sandbox Profile Language",
+          "SBPL",
           "sbpl"
         ],
         "extensions": [
           ".sb",
           ".sbpl"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/file-icon.svg",
+          "dark": "./images/file-icon.svg"
+        }
       }
     ],
     "grammars": [
@@ -41,6 +68,16 @@
         "path": "./syntaxes/sbpl.tmLanguage.json"
       }
     ],
+    "commands": [
+      {
+        "command": "sbpl.checkSyntax",
+        "title": "SBPL: Check Syntax"
+      },
+      {
+        "command": "sbpl.convertToJSON",
+        "title": "SBPL: Convert to JSON"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "SBPL",
@@ -48,12 +85,14 @@
         "sbpl.executablePath": {
           "type": "string",
           "default": "",
-          "description": "Path to the sbpl-convert executable. If empty, will search in PATH."
+          "description": "Path to the sbpl-convert executable. If empty, will search in PATH.",
+          "scope": "machine-overridable"
         },
         "sbpl.enableDiagnostics": {
           "type": "boolean",
           "default": true,
-          "description": "Enable real-time syntax checking."
+          "description": "Enable real-time syntax checking (requires sbpl-convert).",
+          "scope": "resource"
         }
       }
     }
@@ -62,7 +101,8 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "package": "vsce package --allow-missing-repository"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

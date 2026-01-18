@@ -1,0 +1,4 @@
+{
+  "sbpl.executablePath": "${workspaceFolder}/../.build/release/sbpl-convert",
+  "sbpl.enableDiagnostics": true
+}
