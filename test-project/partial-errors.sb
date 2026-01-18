@@ -1,0 +1,29 @@
+(version 1)
+
+; This profile has some errors mixed with valid code
+
+(debug deny)
+
+; Valid import
+(import "system.sb")
+
+; Error: missing closing paren for subpath
+(allow file-read-data
+  (subpath "/usr")
+
+; Valid rule
+(deny default)
+
+; Error: unterminated string
+(allow mach-lookup
+  (global-name "com.apple.test))
+
+; Valid rule with complex filter
+(allow file-write-data
+  (require-all
+    (subpath "/tmp")
+    (require-not
+      (literal "/tmp/protected"))))
+
+; Error: unexpected token
+(allow network-outbound 123)

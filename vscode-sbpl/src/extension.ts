@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
-import * as path from 'path';
+import { SBPLCompletionProvider } from './completion';
 
 let diagnosticCollection: vscode.DiagnosticCollection;
 
@@ -24,6 +24,16 @@ export function activate(context: vscode.ExtensionContext): void {
 
   diagnosticCollection = vscode.languages.createDiagnosticCollection('sbpl');
   context.subscriptions.push(diagnosticCollection);
+
+  // Register completion provider
+  const completionProvider = new SBPLCompletionProvider();
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      'sbpl',
+      completionProvider,
+      '(', ' ', '\n' // Trigger on open paren, space, or newline
+    )
+  );
 
   // Register document change listener
   context.subscriptions.push(

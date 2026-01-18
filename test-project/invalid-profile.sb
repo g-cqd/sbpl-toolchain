@@ -1,0 +1,29 @@
+(version 1)
+
+; This profile has intentional errors for testing
+
+; Missing closing paren
+(debug deny
+
+; Invalid version declaration
+(version "not-a-number")
+
+; Unknown filter type
+(allow file-read-data
+  (unknown-filter "/path"))
+
+; Missing string quote
+(allow mach-lookup
+  (global-name "com.apple.test))
+
+; Duplicate version
+(version 2)
+
+; Empty rule (valid but unusual)
+(allow)
+
+; Unclosed string
+(import "unclosed.sb
+
+; Valid rule at the end to test error recovery
+(deny default)

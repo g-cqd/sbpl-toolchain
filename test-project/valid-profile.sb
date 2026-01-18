@@ -1,0 +1,37 @@
+(version 1)
+
+; This is a valid sandbox profile
+(debug deny)
+
+(import "system.sb")
+
+; Deny by default
+(deny default)
+
+; Allow reading from /usr hierarchy
+(allow file-read-data
+  (subpath "/usr"))
+
+; Allow reading from home directory
+(allow file-read-data
+  (require-any
+    (subpath "/Users")
+    (literal "/etc/passwd")))
+
+; Allow specific Mach services
+(allow mach-lookup
+  (global-name "com.apple.system.logger")
+  (global-name "com.apple.system.notification_center"))
+
+; Network access
+(allow network-outbound
+  (remote tcp "*:443")
+  (remote tcp "*:80"))
+
+; Define a reusable filter
+(define read-only-paths
+  (require-any
+    (subpath "/System")
+    (subpath "/Library")))
+
+(allow file-read-data read-only-paths)
