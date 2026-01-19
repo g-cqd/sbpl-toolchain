@@ -42,8 +42,8 @@ cp .build/release/sbpl-lex /usr/local/bin/
 
 ```bash
 cd vscode-sbpl
-npm install
-npm run compile
+bun install
+bun run compile
 vsce package
 code --install-extension sbpl-language-*.vsix
 ```
@@ -166,7 +166,7 @@ sbpl-toolchain/
 - **Swift**: 6.2+
 - **Platforms**: macOS 14+, iOS 17+
 - **VS Code**: 1.85+ (for extension)
-- **Node.js**: 18+ (for extension development)
+- **Bun**: 1.0+ (for extension development)
 
 ## Contributing
 

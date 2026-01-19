@@ -10,9 +10,9 @@ Thank you for your interest in contributing! This document provides guidelines f
    # Swift package (no external dependencies)
    swift build
 
-   # VS Code extension
+   # VS Code extension (requires Bun)
    cd vscode-sbpl
-   npm install
+   bun install
    ```
 3. **Run tests** to ensure everything works:
    ```bash
@@ -42,12 +42,15 @@ swift build -c release
 cd vscode-sbpl
 
 # Install dependencies
-npm install
+bun install
 
-# Compile TypeScript
-npm run compile
+# Type check
+bun run typecheck
 
-# Watch for changes
+# Compile with Bun
+bun run compile
+
+# Watch for changes (uses tsc)
 npm run watch
 
 # Package extension

@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import * as cp from 'child_process';
-import { SBPLCompletionProvider } from './completion';
+import { SBPLCompletionProvider } from './completion.js';
 
 let diagnosticCollection: vscode.DiagnosticCollection;
 
@@ -12,11 +11,6 @@ interface SBPLDiagnostic {
     end: { line: number; column: number };
   };
   code?: string;
-}
-
-interface CheckResult {
-  file: string;
-  diagnostics: SBPLDiagnostic[];
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -63,11 +57,11 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   // Validate all open SBPL documents
-  vscode.workspace.textDocuments.forEach((document) => {
+  for (const document of vscode.workspace.textDocuments) {
     if (document.languageId === 'sbpl') {
       validateDocument(document);
     }
-  });
+  }
 
   // Register command to manually check syntax
   context.subscriptions.push(
@@ -91,9 +85,7 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  if (diagnosticCollection) {
-    diagnosticCollection.dispose();
-  }
+  diagnosticCollection?.dispose();
 }
 
 function getExecutablePath(): string {
@@ -104,12 +96,11 @@ function getExecutablePath(): string {
     return configuredPath;
   }
 
-  // Default: look for sbpl-convert in the Swift build directory
-  // Users should set this in settings or ensure it's in PATH
+  // Default: look for sbpl-convert in PATH
   return 'sbpl-convert';
 }
 
-function validateDocument(document: vscode.TextDocument): void {
+async function validateDocument(document: vscode.TextDocument): Promise<void> {
   const config = vscode.workspace.getConfiguration('sbpl');
   if (!config.get<boolean>('enableDiagnostics', true)) {
     diagnosticCollection.delete(document.uri);
@@ -119,77 +110,56 @@ function validateDocument(document: vscode.TextDocument): void {
   const text = document.getText();
   const execPath = getExecutablePath();
 
-  // Use sbpl-convert check command with stdin
-  const process = cp.spawn(execPath, ['check', '-'], {
-    stdio: ['pipe', 'pipe', 'pipe']
-  });
+  try {
+    const proc = Bun.spawn([execPath, 'check', '-'], {
+      stdin: new Blob([text]),
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
 
-  let stdout = '';
-  let stderr = '';
+    const [exitCode, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stderr).text(),
+    ]);
 
-  process.stdout.on('data', (data: Buffer) => {
-    stdout += data.toString();
-  });
-
-  process.stderr.on('data', (data: Buffer) => {
-    stderr += data.toString();
-  });
-
-  process.on('error', (error: Error) => {
-    // If the executable is not found, show a warning once
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.warn('sbpl-convert not found. Syntax checking disabled.');
-      diagnosticCollection.delete(document.uri);
-    }
-  });
-
-  process.on('close', (code: number | null) => {
     const diagnostics: vscode.Diagnostic[] = [];
 
-    // Parse diagnostics from stderr (one per line, JSON format)
+    // Parse diagnostics from stderr
     if (stderr) {
-      try {
-        const lines = stderr.trim().split('\n');
-        for (const line of lines) {
-          if (line.startsWith('{')) {
+      const lines = stderr.trim().split('\n');
+      for (const line of lines) {
+        if (line.startsWith('{')) {
+          try {
             const diag = JSON.parse(line) as SBPLDiagnostic;
             diagnostics.push(convertDiagnostic(diag));
-          } else if (line.includes(':')) {
-            // Simple format: "line:column: severity: message"
-            const match = line.match(/(\d+):(\d+):\s*(error|warning|info|hint):\s*(.+)/);
-            if (match) {
-              const lineNum = parseInt(match[1], 10) - 1;
-              const colNum = parseInt(match[2], 10) - 1;
-              const severity = mapSeverity(match[3]);
-              const message = match[4];
-
-              diagnostics.push(new vscode.Diagnostic(
-                new vscode.Range(lineNum, colNum, lineNum, colNum + 1),
-                message,
-                severity
-              ));
-            }
+          } catch {
+            // Skip malformed JSON
           }
-        }
-      } catch {
-        // If parsing fails, try to extract error message
-        const match = stderr.match(/error:\s*(.+)/i);
-        if (match) {
-          diagnostics.push(new vscode.Diagnostic(
-            new vscode.Range(0, 0, 0, 1),
-            match[1],
-            vscode.DiagnosticSeverity.Error
-          ));
+        } else if (line.includes(':')) {
+          // Simple format: "line:column: severity: message"
+          const match = line.match(/(\d+):(\d+):\s*(error|warning|info|hint):\s*(.+)/);
+          if (match) {
+            const lineNum = parseInt(match[1], 10) - 1;
+            const colNum = parseInt(match[2], 10) - 1;
+            const severity = mapSeverity(match[3]);
+            const message = match[4];
+
+            diagnostics.push(new vscode.Diagnostic(
+              new vscode.Range(lineNum, colNum, lineNum, colNum + 1),
+              message,
+              severity
+            ));
+          }
         }
       }
     }
 
     diagnosticCollection.set(document.uri, diagnostics);
-  });
-
-  // Send document content to stdin
-  process.stdin.write(text);
-  process.stdin.end();
+  } catch (error) {
+    // If the executable is not found, clear diagnostics silently
+    console.warn('sbpl-convert not found. Syntax checking disabled.');
+    diagnosticCollection.delete(document.uri);
+  }
 }
 
 function convertDiagnostic(diag: SBPLDiagnostic): vscode.Diagnostic {
@@ -232,43 +202,31 @@ async function convertToJSON(document: vscode.TextDocument): Promise<void> {
   const text = document.getText();
   const execPath = getExecutablePath();
 
-  return new Promise((resolve, reject) => {
-    const process = cp.spawn(execPath, ['to-json', '-'], {
-      stdio: ['pipe', 'pipe', 'pipe']
+  try {
+    const proc = Bun.spawn([execPath, 'to-json', '-'], {
+      stdin: new Blob([text]),
+      stdout: 'pipe',
+      stderr: 'pipe',
     });
 
-    let stdout = '';
-    let stderr = '';
+    const [exitCode, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
 
-    process.stdout.on('data', (data: Buffer) => {
-      stdout += data.toString();
-    });
-
-    process.stderr.on('data', (data: Buffer) => {
-      stderr += data.toString();
-    });
-
-    process.on('error', (error: Error) => {
-      vscode.window.showErrorMessage(`Failed to run sbpl-convert: ${error.message}`);
-      reject(error);
-    });
-
-    process.on('close', async (code: number | null) => {
-      if (code === 0 && stdout) {
-        // Open a new document with the JSON content
-        const jsonDoc = await vscode.workspace.openTextDocument({
-          content: stdout,
-          language: 'json'
-        });
-        await vscode.window.showTextDocument(jsonDoc, vscode.ViewColumn.Beside);
-        resolve();
-      } else {
-        vscode.window.showErrorMessage(`Conversion failed: ${stderr || 'Unknown error'}`);
-        reject(new Error(stderr));
-      }
-    });
-
-    process.stdin.write(text);
-    process.stdin.end();
-  });
+    if (exitCode === 0 && stdout) {
+      // Open a new document with the JSON content
+      const jsonDoc = await vscode.workspace.openTextDocument({
+        content: stdout,
+        language: 'json'
+      });
+      await vscode.window.showTextDocument(jsonDoc, vscode.ViewColumn.Beside);
+    } else {
+      vscode.window.showErrorMessage(`Conversion failed: ${stderr || 'Unknown error'}`);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    vscode.window.showErrorMessage(`Failed to run sbpl-convert: ${message}`);
+  }
 }

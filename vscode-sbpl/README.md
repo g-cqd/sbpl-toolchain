@@ -57,10 +57,10 @@ Search for "SBPL" in the Extensions view (`Cmd+Shift+X`).
 ### From VSIX
 
 ```bash
-# Build from source
+# Build from source (requires Bun)
 cd vscode-sbpl
-npm install
-npm run compile
+bun install
+bun run compile
 vsce package
 
 # Install
@@ -118,6 +118,7 @@ cp .build/release/sbpl-convert /usr/local/bin/
 ## Requirements
 
 - **VS Code**: 1.85.0 or later
+- **Bun**: 1.0+ (for building from source)
 - **sbpl-convert**: Required for diagnostics (optional for highlighting only)
 
 ## Contributing
