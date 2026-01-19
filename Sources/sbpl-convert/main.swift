@@ -145,7 +145,6 @@ struct SBPLConvertCLI {
     guard FileManager.default.fileExists(atPath: path) else {
       fputs("Error: File not found: \(path)\n", stderr)
       Foundation.exit(1)
-      return nil
     }
 
     do {
@@ -153,7 +152,6 @@ struct SBPLConvertCLI {
     } catch {
       fputs("Error reading file: \(error.localizedDescription)\n", stderr)
       Foundation.exit(1)
-      return nil
     }
   }
 

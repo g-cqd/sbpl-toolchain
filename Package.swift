@@ -4,8 +4,7 @@ import PackageDescription
 let package = Package(
   name: "sbpl-toolchain",
   platforms: [
-    .macOS(.v14),
-    .iOS(.v17),
+    .macOS(.v10_13),
   ],
   products: [
     .library(

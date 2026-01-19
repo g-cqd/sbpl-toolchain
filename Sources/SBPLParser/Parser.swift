@@ -103,7 +103,6 @@ public final class Parser: @unchecked Sendable {
       return nil
     }
 
-    let formNameRange = currentToken.range
     advance()  // consume form name
 
     let result: TopLevelDecl

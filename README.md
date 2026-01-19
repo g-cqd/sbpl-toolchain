@@ -164,7 +164,7 @@ sbpl-toolchain/
 ## Requirements
 
 - **Swift**: 6.2+
-- **Platforms**: macOS 14+, iOS 17+
+- **Platforms**: macOS 10.13+ (High Sierra)
 - **VS Code**: 1.85+ (for extension)
 - **Bun**: 1.0+ (for extension development)
 
