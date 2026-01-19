@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 import PackageDescription
 
 let package = Package(
@@ -36,52 +36,70 @@ let package = Package(
   targets: [
     // Core types with no external dependencies
     .target(
-      name: "SBPLCore"
+      name: "SBPLCore",
+      swiftSettings: swiftSettings
     ),
     // Lexer depends on SBPLCore
     .target(
       name: "SBPLLexer",
-      dependencies: ["SBPLCore"]
+      dependencies: ["SBPLCore"],
+      swiftSettings: swiftSettings
     ),
     // Parser depends on Lexer
     .target(
       name: "SBPLParser",
-      dependencies: ["SBPLCore", "SBPLLexer"]
+      dependencies: ["SBPLCore", "SBPLLexer"],
+      swiftSettings: swiftSettings
     ),
     // Converter depends on Parser
     .target(
       name: "SBPLConverter",
-      dependencies: ["SBPLCore", "SBPLParser"]
+      dependencies: ["SBPLCore", "SBPLParser"],
+      swiftSettings: swiftSettings
     ),
     // CLI for testing lexer
     .executableTarget(
       name: "sbpl-lex",
-      dependencies: ["SBPLLexer"]
+      dependencies: ["SBPLLexer"],
+      swiftSettings: swiftSettings
     ),
     // CLI for converting
     .executableTarget(
       name: "sbpl-convert",
-      dependencies: ["SBPLConverter"]
+      dependencies: ["SBPLConverter"],
+      swiftSettings: swiftSettings
     ),
     // Tests
     .testTarget(
       name: "SBPLCoreTests",
-      dependencies: ["SBPLCore"]
+      dependencies: ["SBPLCore"],
+      swiftSettings: swiftSettings
     ),
     .testTarget(
       name: "SBPLLexerTests",
       dependencies: ["SBPLLexer"],
       resources: [
         .copy("../../Fixtures"),
-      ]
+      ],
+      swiftSettings: swiftSettings
     ),
     .testTarget(
       name: "SBPLParserTests",
-      dependencies: ["SBPLParser"]
+      dependencies: ["SBPLParser"],
+      swiftSettings: swiftSettings
     ),
     .testTarget(
       name: "SBPLConverterTests",
-      dependencies: ["SBPLConverter"]
+      dependencies: ["SBPLConverter"],
+      swiftSettings: swiftSettings
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )
+
+// MARK: - Swift Settings
+
+let swiftSettings: [SwiftSetting] = [
+  .enableUpcomingFeature("ExistentialAny"),
+  .enableUpcomingFeature("InternalImportsByDefault"),
+]

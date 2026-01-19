@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Upgraded to Swift 6.2 with Swift 6 language mode
+- Enabled upcoming features: `ExistentialAny`, `InternalImportsByDefault`
+
 ## [0.1.0] - 2025-01-18
 
 ### Added
@@ -58,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `SBPL: Convert to JSON`
 
 ### Technical Details
-- Swift 6.0+ with strict concurrency
+- Swift 6.2+ with Swift 6 language mode
 - macOS 14+, iOS 17+ platform support
 - VS Code 1.85+ compatibility
 - Comprehensive test suite (83 tests)

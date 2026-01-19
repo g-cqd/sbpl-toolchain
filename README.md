@@ -163,7 +163,7 @@ sbpl-toolchain/
 
 ## Requirements
 
-- **Swift**: 6.0+
+- **Swift**: 6.2+
 - **Platforms**: macOS 14+, iOS 17+
 - **VS Code**: 1.85+ (for extension)
 - **Node.js**: 18+ (for extension development)
