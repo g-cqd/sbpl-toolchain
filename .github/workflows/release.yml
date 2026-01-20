@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    name: Build macOS (${{ matrix.arch }})
+    runs-on: macos-15
+    strategy:
+      matrix:
+        arch: [arm64, x86_64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.2"
+
+      - name: Build Release
+        run: |
+          swift build -c release --arch ${{ matrix.arch }}
+
+      - name: Create Archive
+        run: |
+          mkdir -p dist
+          cp .build/release/sbpl-convert dist/
+          cp .build/release/sbpl-lex dist/
+          cd dist
+          tar -czvf ../sbpl-toolchain-macos-${{ matrix.arch }}.tar.gz *
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbpl-toolchain-macos-${{ matrix.arch }}
+          path: sbpl-toolchain-macos-${{ matrix.arch }}.tar.gz
+
+  build-vscode-extension:
+    name: Build VS Code Extension
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vscode-sbpl
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Package Extension
+        run: |
+          bun install -g @vscode/vsce
+          vsce package --allow-missing-repository
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension
+          path: vscode-sbpl/*.vsix
+
+  create-release:
+    name: Create Release
+    needs: [build-macos, build-vscode-extension]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure
+        run: ls -R artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          generate_release_notes: true
+          files: |
+            artifacts/sbpl-toolchain-macos-arm64/*.tar.gz
+            artifacts/sbpl-toolchain-macos-x86_64/*.tar.gz
+            artifacts/vscode-extension/*.vsix
