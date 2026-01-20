@@ -2,7 +2,7 @@
   "name": "sbpl-language",
   "displayName": "SBPL - Sandbox Profile Language",
   "description": "Syntax highlighting, diagnostics, and autocompletion for Apple Sandbox Profile Language (.sb) files",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "publisher": "sbpl-toolchain",
   "author": "SBPL Toolchain Contributors",

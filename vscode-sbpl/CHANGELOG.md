@@ -2,6 +2,13 @@
 
 All notable changes to the "sbpl-language" extension will be documented in this file.
 
+## [1.0.0] - 2025-01-20
+
+### Changed
+- Migrated from Node.js to Bun for faster builds
+- Converted to ES modules
+- Updated process spawning to use Bun.spawn API
+
 ## [0.1.0] - 2025-01-18
 
 ### Added

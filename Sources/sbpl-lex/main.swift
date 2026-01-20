@@ -20,7 +20,7 @@ struct SBPLLexCLI {
       printUsage()
 
     case "-v", "--version":
-      print("sbpl-lex 0.1.0")
+      print("sbpl-lex 1.0.0")
 
     case "--stdin":
       lexStdin()

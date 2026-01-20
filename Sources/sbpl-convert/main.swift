@@ -20,7 +20,7 @@ struct SBPLConvertCLI {
       printUsage()
 
     case "-v", "--version":
-      print("sbpl-convert 0.1.0")
+      print("sbpl-convert 1.0.0")
 
     case "to-json":
       guard arguments.count >= 3 else {

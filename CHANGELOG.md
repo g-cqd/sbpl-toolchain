@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-01-20
+
 ### Changed
 - Upgraded to Swift 6.2 with Swift 6 language mode
 - Enabled upcoming features: `ExistentialAny`, `InternalImportsByDefault`
+- Lowered minimum macOS deployment target from 14 to 10.13 (High Sierra)
+- Removed iOS target (macOS-only toolchain)
+- Migrated VS Code extension from Node.js to Bun
+- Converted VS Code extension to ES modules
+
+### Fixed
+- Removed unused variable warnings in Parser
+- Removed unreachable code warnings in CLI tools
 
 ## [0.1.0] - 2025-01-18
 
@@ -63,9 +73,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Details
 - Swift 6.2+ with Swift 6 language mode
-- macOS 14+, iOS 17+ platform support
+- macOS 10.13+ platform support
 - VS Code 1.85+ compatibility
 - Comprehensive test suite (83 tests)
 
-[Unreleased]: https://github.com/g-cqd/sbpl-toolchain/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/g-cqd/sbpl-toolchain/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/g-cqd/sbpl-toolchain/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/g-cqd/sbpl-toolchain/releases/tag/v0.1.0
